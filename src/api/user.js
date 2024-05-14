@@ -1,4 +1,5 @@
 import { localAxios } from "@/util/http-commons";
+import BaseComponent from "bootstrap/js/dist/base-component";
 
 const local = localAxios();
 
