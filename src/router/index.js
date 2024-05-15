@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
 
 const onlyAuthUser = async (to, from, next) => {
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
   const { getUserInfo } = memberStore;
-
+  
   let token = sessionStorage.getItem("accessToken");
 
   if (userInfo.value != null && token) {
