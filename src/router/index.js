@@ -1,26 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
 
 const onlyAuthUser = async (to, from, next) => {
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
   const { getUserInfo } = memberStore;
-
+  
   let token = sessionStorage.getItem("accessToken");
-
-  console.log(123);
-  console.log(userInfo.value);
-  console.log(token);
 
   if (userInfo.value != null && token) {
     await getUserInfo(token);
-    console.log("가져오기");
   }
   if (!isValidToken.value || userInfo.value === null) {
-    console.log("실패");
     next({ name: "user-login" });
   } else {
-    console.log("성공");
     next();
   }
 };
