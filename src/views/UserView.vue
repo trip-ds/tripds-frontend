@@ -9,7 +9,7 @@ import { RouterView } from "vue-router";
 </template>
 
 <style>
-mark.orange {
-  background: linear-gradient(to top, rgb(243, 164, 18) 20%, transparent 30%);
+body {
+  background-color: #FCFCFC;
 }
 </style>
