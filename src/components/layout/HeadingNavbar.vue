@@ -55,7 +55,7 @@ const logout = () => {
 
 <style scoped>
 header {
-  font-family: "BMHANNAPro";
+  font-family: "Jalnan2TTF";
   background-color: #fcfcfc;
   padding: 20px;
 }
