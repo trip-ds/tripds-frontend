@@ -12,8 +12,8 @@ const { userLogin, getUserInfo } = memberStore;
 const { changeMenuState } = useUserMenuStore();
 
 const loginUser = ref({
-  userId: "",
-  userPwd: "",
+  email: "",
+  password: "",
 });
 
 const login = async () => {
@@ -57,7 +57,7 @@ const login = async () => {
                 <input
                   type="text"
                   class="form-control form-control-lg"
-                  v-model="loginUser.userId"
+                  v-model="loginUser.email"
                   placeholder="example@gmail.com"
                 />
               </div>
@@ -65,7 +65,7 @@ const login = async () => {
                 <input
                   type="password"
                   class="form-control form-control-lg"
-                  v-model="loginUser.userPwd"
+                  v-model="loginUser.password"
                   @keyup.enter="login"
                   placeholder="••••••••••"
                 />

@@ -43,9 +43,10 @@ export const useMemberStore = defineStore("memberStore", () => {
   const getUserInfo = async (token) => {
     let decodeToken = jwtDecode(token);
     await findById(
-      decodeToken.userId,
+      decodeToken.email,
       (response) => {
         if (response.status === httpStatusCode.OK) {
+          console.log(response);
           userInfo.value = response.data.userInfo;
         } else {
           console.log("유저 정보 없음!!!!");
