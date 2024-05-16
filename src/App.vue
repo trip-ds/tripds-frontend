@@ -13,12 +13,12 @@ import { RouterView } from "vue-router";
 
 <style>
 @font-face {
-  font-family: "BMHANNAPro";
-  src: url("../public/fonts/BMHANNAPro.ttf");
+  font-family: "Jalnan2TTF";
+  src: url("../public/fonts/Jalnan2TTF.ttf");
 }
 
 body {
-  font-family: "BMHANNAPro";
+  font-family: "Jalnan2TTF";
   -moz-osx-font-smoothing: grayscale;
 }
 </style>
