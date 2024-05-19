@@ -47,7 +47,7 @@ export const useMemberStore = defineStore("memberStore", () => {
       (response) => {
         if (response.status === httpStatusCode.OK) {
           console.log(response);
-          userInfo.value = response.data.userInfo;
+          userInfo.value = response.data;
         } else {
           console.log("유저 정보 없음!!!!");
         }
@@ -82,7 +82,7 @@ export const useMemberStore = defineStore("memberStore", () => {
         if (error.response.status === httpStatusCode.UNAUTHORIZED) {
           // 다시 로그인 전 DB에 저장된 RefreshToken 제거.
           await logout(
-            userInfo.value.userid,
+            userInfo.value.email,
             (response) => {
               if (response.status === httpStatusCode.OK) {
                 console.log("리프레시 토큰 제거 성공");
@@ -107,9 +107,9 @@ export const useMemberStore = defineStore("memberStore", () => {
   };
 
   const userLogout = async () => {
-    console.log("로그아웃 아이디 : " + userInfo.value.userId);
+    console.log("로그아웃 아이디 : " + userInfo.value.email);
     await logout(
-      userInfo.value.userId,
+      userInfo.value.email,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           isLogin.value = false;
