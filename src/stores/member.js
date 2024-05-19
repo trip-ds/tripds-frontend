@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, findById, tokenRegeneration, logout } from "@/api/user";
+import { userRegister ,userConfirm, findById, tokenRegeneration, logout } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -13,6 +13,31 @@ export const useMemberStore = defineStore("memberStore", () => {
   const isLoginError = ref(false);
   const userInfo = ref(null);
   const isValidToken = ref(false);
+  const isRegistered = ref(false);
+  const isRegisterError = ref(false);
+
+  const userSignup = async (registerUser) => {
+    return new Promise((resolve, reject) => {
+      userRegister(
+        registerUser,
+        (response) => {
+          if (response.status === httpStatusCode.CREATE) {
+            console.log("회원가입 성공!!!!");
+            isRegistered.value = true;
+            isRegisterError.value = false;
+            resolve();
+          }
+        },
+        (error) => {
+          console.log("회원가입 실패!!!!");
+          isRegistered.value = false;
+          isRegisterError.value = true;
+          console.error(error.response.data.message);
+          reject(error);
+        }
+      );
+    });
+  };
 
   const userLogin = async (loginUser) => {
     await userConfirm(
@@ -129,10 +154,13 @@ export const useMemberStore = defineStore("memberStore", () => {
   };
 
   return {
+    isRegistered,
+    isRegisterError,
     isLogin,
     isLoginError,
     userInfo,
     isValidToken,
+    userSignup,
     userLogin,
     getUserInfo,
     tokenRegenerate,
