@@ -1,6 +1,9 @@
-<script setup></script>
+<script setup>
+import HeadingNavbar from "@/components/layout/HeadingNavbar.vue";
+</script>
 
 <template>
+  <HeadingNavbar/>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
