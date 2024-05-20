@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
 import {
+  userDelete,
   userUpdate as userUpdateAPI,
   userRegister,
   userConfirm,
@@ -127,6 +128,31 @@ export const useMemberStore = defineStore("memberStore", () => {
     );
   };
 
+  const deleteAccount = async () => {
+    const email = userInfo.value.email;
+    await userDelete(
+      email,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          console.log("계정 삭제 성공");
+          isLogin.value = false;
+          userInfo.value = null;
+          isValidToken.value = false;
+          sessionStorage.removeItem("accessToken");
+          sessionStorage.removeItem("refreshToken");
+          sessionStorage.removeItem("isLogin");
+          sessionStorage.removeItem("userInfo");
+          router.push({ name: "user-login" });
+        } else {
+          console.error("계정 삭제 실패");
+        }
+      },
+      (error) => {
+        console.error("계정 삭제 실패:", error);
+      }
+    );
+  };
+
   const tokenRegenerate = async () => {
     await tokenRegeneration(
       JSON.stringify(userInfo.value),
@@ -203,5 +229,6 @@ export const useMemberStore = defineStore("memberStore", () => {
     tokenRegenerate,
     userLogout,
     userUpdate,
+    deleteAccount,
   };
 });
