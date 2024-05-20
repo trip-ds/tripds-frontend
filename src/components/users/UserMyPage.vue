@@ -2,8 +2,10 @@
 import HeadingNavbar from "@/components/layout/HeadingNavbar.vue";
 import { ref, onMounted } from "vue";
 import { useMemberStore } from "@/stores/member.js";
+import { useUserMenuStore } from "@/stores/userMenu.js";
 import router from "@/router";
 
+const { changeMenuState } = useUserMenuStore();
 const memberStore = useMemberStore();
 
 const isEditing = ref(false);
@@ -60,6 +62,14 @@ const updateUser = async () => {
     console.error("사용자 정보 업데이트 실패:", error);
   }
 };
+
+const deleteAccount = async () => {
+  if (window.confirm("정말 계정을 삭제하시겠습니까?")) {
+    await memberStore.deleteAccount();
+    changeMenuState();
+    router.replace("/");
+  }
+};
 </script>
 
 <template>
@@ -100,7 +110,7 @@ const updateUser = async () => {
         </div>
         <div class="row justify-content-center">
           <div class="col-auto">
-            <button class="delete-account noselect">
+            <button class="delete-account noselect" @click="deleteAccount">
               <span class="text">계정삭제</span>
               <span class="icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
