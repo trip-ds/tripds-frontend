@@ -17,6 +17,10 @@ async function userConfirm(param, success, fail) {
   await local.post(`/api/user/login`, param).then(success).catch(fail);
 }
 
+async function userDelete(email, success, fail) {
+  await local.delete(`/api/user/delete/${email}`).then(success).catch(fail);
+}
+
 async function findByEmail(email, success, fail) {
   local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
   await local.get(`/api/user/info/${email}`).then(success).catch(fail);
@@ -31,4 +35,12 @@ async function logout(email, success, fail) {
   await local.get(`/api/user/logout/${email}`).then(success).catch(fail);
 }
 
-export { userRegister, userUpdate, userConfirm, findByEmail, tokenRegeneration, logout };
+export {
+  userRegister,
+  userUpdate,
+  userDelete,
+  userConfirm,
+  findByEmail,
+  tokenRegeneration,
+  logout,
+};
