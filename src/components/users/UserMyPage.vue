@@ -2,6 +2,7 @@
 import HeadingNavbar from "@/components/layout/HeadingNavbar.vue";
 import { ref, onMounted } from "vue";
 import { useMemberStore } from "@/stores/member.js";
+import router from "@/router";
 
 const memberStore = useMemberStore();
 
@@ -30,7 +31,7 @@ const email = ref("");
 const age = ref("");
 const address = ref("");
 
-onMounted(async () => {
+const fetchUserInfo = async () => {
   if (memberStore.isLogin) {
     await memberStore.getUserInfo(sessionStorage.getItem("accessToken"));
     const userInfo = memberStore.userInfo;
@@ -39,7 +40,26 @@ onMounted(async () => {
     age.value = userInfo.age;
     address.value = userInfo.address;
   }
-});
+};
+
+onMounted(fetchUserInfo);
+
+const updateUser = async () => {
+  const updatedUser = {
+    nickname: nickname.value,
+    age: age.value,
+    address: address.value,
+    email: email.value,
+  };
+
+  try {
+    await memberStore.userUpdate(updatedUser);
+    await fetchUserInfo();
+    isEditing.value = !isEditing.value;
+  } catch (error) {
+    console.error("사용자 정보 업데이트 실패:", error);
+  }
+};
 </script>
 
 <template>
@@ -152,7 +172,9 @@ onMounted(async () => {
                   <button type="button" class="btn btn-secondary mr-3" @click="toggleEdit">
                     CANCEL
                   </button>
-                  <button type="submit" class="btn btn-primary save">SAVE</button>
+                  <button type="button" class="btn btn-primary save" @click="updateUser">
+                    SAVE
+                  </button>
                 </template>
               </div>
             </form>
