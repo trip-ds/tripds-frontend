@@ -61,6 +61,8 @@ export const useMemberStore = defineStore("memberStore", () => {
         isLoginError.value = true;
         isValidToken.value = false;
         console.error(error);
+
+        throw error;
       }
     );
   };

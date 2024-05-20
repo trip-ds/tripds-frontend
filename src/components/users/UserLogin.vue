@@ -17,14 +17,18 @@ const loginUser = ref({
 });
 
 const login = async () => {
-  await userLogin(loginUser.value);
-  let token = sessionStorage.getItem("accessToken");
-  console.log(token);
-  console.log("isLogin: " + isLogin.value);
-  if (isLogin.value) {
-    getUserInfo(token);
-    changeMenuState();
-    router.replace("/");
+  try {
+    await userLogin(loginUser.value);
+    let token = sessionStorage.getItem("accessToken");
+    console.log(token);
+    console.log("isLogin: " + isLogin.value);
+    if (isLogin.value) {
+      getUserInfo(token);
+      changeMenuState();
+      router.replace("/");
+    }
+  } catch (error) {
+    alert(error.response.data.message);
   }
 };
 </script>
