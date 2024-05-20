@@ -2,6 +2,7 @@
 import { useUserMenuStore } from "@/stores/userMenu.js";
 import { useMemberStore } from "@/stores/member.js";
 import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router";
 
 const menuStore = useUserMenuStore();
 const memberStore = useMemberStore();
@@ -20,7 +21,9 @@ const logout = () => {
     <div class="top-bar">
       <div class="left-section">
         <img src="@/assets/logo.png" alt="Logo" class="logo" />
-        <h1 class="title">트립동산</h1>
+        <h1>
+          <RouterLink class="title" :to="{ name: 'main' }">트립동산</RouterLink>
+        </h1>
       </div>
       <ul class="right-section">
         <template v-for="menu in menuList" :key="menu.routeName">
@@ -82,6 +85,7 @@ header {
   margin: 0;
   font-size: 20px;
   color: #87ceeb;
+  text-decoration-line: none;
 }
 
 .right-section {
