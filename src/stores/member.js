@@ -3,15 +3,22 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userRegister ,userConfirm, findById, tokenRegeneration, logout } from "@/api/user";
+import {
+  userUpdate as userUpdateAPI,
+  userRegister,
+  userConfirm,
+  findByEmail,
+  tokenRegeneration,
+  logout,
+} from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
   const router = useRouter();
 
-  const isLogin = ref(false);
+  const isLogin = ref(sessionStorage.getItem("isLogin") || false);
   const isLoginError = ref(false);
-  const userInfo = ref(null);
+  const userInfo = ref(JSON.parse(sessionStorage.getItem("userInfo")) || null);
   const isValidToken = ref(false);
   const isRegistered = ref(false);
   const isRegisterError = ref(false);
@@ -39,6 +46,26 @@ export const useMemberStore = defineStore("memberStore", () => {
     });
   };
 
+  const userUpdate = async (updatedUser) => {
+    return new Promise((resolve, reject) => {
+      userUpdateAPI(
+        // userUpdate 대신 userUpdateAPI를 호출합니다.
+        updatedUser,
+        (response) => {
+          if (response.status === httpStatusCode.OK) {
+            console.log("사용자 정보 업데이트 성공!!!!");
+            resolve();
+          }
+        },
+        (error) => {
+          console.log("사용자 정보 업데이트 실패!!!!");
+          console.error(error.response.data.message);
+          reject(error);
+        }
+      );
+    });
+  };
+
   const userLogin = async (loginUser) => {
     await userConfirm(
       loginUser,
@@ -53,6 +80,9 @@ export const useMemberStore = defineStore("memberStore", () => {
           isValidToken.value = true;
           sessionStorage.setItem("accessToken", accessToken);
           sessionStorage.setItem("refreshToken", refreshToken);
+          sessionStorage.setItem("isLogin", true);
+
+          getUserInfo(accessToken);
         }
       },
       (error) => {
@@ -69,12 +99,15 @@ export const useMemberStore = defineStore("memberStore", () => {
 
   const getUserInfo = async (token) => {
     let decodeToken = jwtDecode(token);
-    await findById(
+    await findByEmail(
       decodeToken.email,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           console.log(response);
           userInfo.value = response.data;
+          isValidToken.value = true;
+
+          sessionStorage.setItem("userInfo", JSON.stringify(userInfo.value));
         } else {
           console.log("유저 정보 없음!!!!");
         }
@@ -145,6 +178,8 @@ export const useMemberStore = defineStore("memberStore", () => {
 
           sessionStorage.removeItem("accessToken");
           sessionStorage.removeItem("refreshToken");
+          sessionStorage.removeItem("isLogin");
+          sessionStorage.removeItem("userInfo");
         } else {
           console.error("유저 정보 없음!!!!");
         }
@@ -167,5 +202,6 @@ export const useMemberStore = defineStore("memberStore", () => {
     getUserInfo,
     tokenRegenerate,
     userLogout,
+    userUpdate,
   };
 });
