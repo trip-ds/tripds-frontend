@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
-
 // station vue api axios instance
 function stationAxios() {
   const instance = axios.create({

@@ -1,23 +1,46 @@
 import { localAxios } from "@/util/http-commons";
+import BaseComponent from "bootstrap/js/dist/base-component";
 
 const local = localAxios();
 
-async function userConfirm(param, success, fail) {
-  await local.post(`/user/login`, param).then(success).catch(fail);
+async function userRegister(param, success, fail) {
+  console.log(param);
+  await local.post(`/api/user/signup`, param).then(success).catch(fail);
 }
 
-async function findById(userid, success, fail) {
+async function userUpdate(param, success, fail) {
+  console.log(param);
+  await local.put(`/api/user/update`, param).then(success).catch(fail);
+}
+
+async function userConfirm(param, success, fail) {
+  await local.post(`/api/user/login`, param).then(success).catch(fail);
+}
+
+async function userDelete(email, success, fail) {
+  await local.delete(`/api/user/delete/${email}`).then(success).catch(fail);
+}
+
+async function findByEmail(email, success, fail) {
   local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
-  await local.get(`/user/info/${userid}`).then(success).catch(fail);
+  await local.get(`/api/user/info/${email}`).then(success).catch(fail);
 }
 
 async function tokenRegeneration(user, success, fail) {
   local.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken"); //axios header에 refresh-token 셋팅
-  await local.post(`/user/refresh`, user).then(success).catch(fail);
+  await local.post(`/api/user/refresh`, user).then(success).catch(fail);
 }
 
-async function logout(userid, success, fail) {
-  await local.get(`/user/logout/${userid}`).then(success).catch(fail);
+async function logout(email, success, fail) {
+  await local.get(`/api/user/logout/${email}`).then(success).catch(fail);
 }
 
-export { userConfirm, findById, tokenRegeneration, logout };
+export {
+  userRegister,
+  userUpdate,
+  userDelete,
+  userConfirm,
+  findByEmail,
+  tokenRegeneration,
+  logout,
+};

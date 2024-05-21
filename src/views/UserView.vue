@@ -1,5 +1,4 @@
 <script setup>
-import HeadingNavbar from "@/components/layout/HeadingNavbar.vue";
 import { RouterView } from "vue-router";
 </script>
 
@@ -12,13 +11,7 @@ import { RouterView } from "vue-router";
 </template>
 
 <style>
-@font-face {
-  font-family: "Jalnan2TTF";
-  src: url("../public/fonts/Jalnan2TTF.ttf");
-}
-
 body {
-  font-family: "Jalnan2TTF";
-  -moz-osx-font-smoothing: grayscale;
+  background-color: #FCFCFC;
 }
 </style>
