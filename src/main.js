@@ -10,6 +10,9 @@ import router from "./router";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 
+import '@fortawesome/fontawesome-free/css/all.css';
+import 'daterangepicker/daterangepicker.css';
+
 const app = createApp(App);
 const pinia = createPinia();
 
