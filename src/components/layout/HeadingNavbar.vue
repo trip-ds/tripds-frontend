@@ -14,6 +14,8 @@ const logout = () => {
   userLogout();
   changeMenuState();
 };
+
+defineEmits(["toggle-aside"]);
 </script>
 
 <template>
@@ -47,7 +49,7 @@ const logout = () => {
       <ul class="left-menu">
         <li><a href="#">원룸</a></li>
         <li><a href="#">오피스텔</a></li>
-        <li><a href="#">MY관심</a></li>
+        <li @click.prevent="$emit('toggle-aside')">my관심</li>
       </ul>
       <ul class="right-menu">
         <li><a href="#">커뮤니티</a></li>
@@ -58,6 +60,8 @@ const logout = () => {
 
 <style scoped>
 header {
+  position: relative;
+  z-index: 100;
   font-family: "Jalnan2TTF";
   background-color: #fcfcfc;
   padding: 20px;
