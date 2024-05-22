@@ -1,4 +1,13 @@
 <script setup>
+import { useEstateStore } from "@/stores/estate.js";
+import { storeToRefs } from "pinia";
+
+const estateStore = useEstateStore();
+const { estateList } = storeToRefs(estateStore);
+const { getEsateInterestList } = estateStore;
+
+console.log(estateList);
+
 defineProps({
   isOpen: {
     type: Boolean,
