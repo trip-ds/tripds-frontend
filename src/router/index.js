@@ -22,6 +22,7 @@ const onlyAuthUser = async (to, from, next) => {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // main //
     {
       path: "/",
       name: "main",
