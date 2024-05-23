@@ -5,7 +5,7 @@ import HeadingNavbar from "@/components/layout/HeadingNavbar.vue";
 import MyInterestEstateAside from "@/components/estate/MyInterestEstateAside.vue";
 
 const estateStore = useEstateStore();
-const { getEsateInterestList } = estateStore;
+const { getEsateInterestList, insertEstateInterest } = estateStore;
 
 const isAsideOpen = ref(false);
 const estateInterestList = ref([]);
@@ -18,11 +18,24 @@ const toggleAside = async () => {
     console.log(estateInterestList);
   }
 };
+
+// 등록 예시 코드
+const insertInterest = async () => {
+  const param = {
+    email: "ssafy@ssafy.com",
+    registerNumber: "11140-2020-00046",
+  };
+
+  await insertEstateInterest(param);
+};
 </script>
 
 <template>
   <HeadingNavbar @toggle-aside="toggleAside" />
   <div>main</div>
+
+  <!-- 등록 예시 버튼 -->
+  <button @click="insertInterest">등록</button>
 
   <MyInterestEstateAside
     :isOpen="isAsideOpen"

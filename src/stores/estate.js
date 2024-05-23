@@ -5,7 +5,21 @@ import { httpStatusCode } from "@/util/http-status";
 import * as estateAPI from "@/api/estate.js";
 
 export const useEstateStore = defineStore("estateStore", () => {
+  // 관심부동산 //
   const estateInterestList = ref([]);
+
+  const insertEstateInterest = async (estateInterest) => {
+    await estateAPI.insertEstateInterest(
+      estateInterest,
+      (response) => {
+        console.log("등록성공 여부 : " + response.data);
+      },
+      (error) => {
+        console.log("관심 부동산 등록 실패!!!");
+        console.log(error);
+      }
+    );
+  };
 
   const getEsateInterestList = async () => {
     const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -25,5 +39,5 @@ export const useEstateStore = defineStore("estateStore", () => {
     return estateInterestList.value;
   };
 
-  return { estateInterestList, getEsateInterestList };
+  return { estateInterestList, getEsateInterestList, insertEstateInterest };
 });
