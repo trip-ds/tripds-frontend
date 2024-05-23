@@ -2,19 +2,20 @@
 import { useUserMenuStore } from "@/stores/userMenu.js";
 import { useMemberStore } from "@/stores/member.js";
 import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router";
 
 const menuStore = useUserMenuStore();
 const memberStore = useMemberStore();
-
 const { menuList } = storeToRefs(menuStore);
 const { changeMenuState } = menuStore;
-
 const { userLogout } = memberStore;
 
 const logout = () => {
   userLogout();
   changeMenuState();
 };
+
+defineEmits(["toggle-aside"]);
 </script>
 
 <template>
@@ -22,35 +23,33 @@ const logout = () => {
     <div class="top-bar">
       <div class="left-section">
         <img src="@/assets/logo.png" alt="Logo" class="logo" />
-        <h1 class="title">트립동산</h1>
+        <h1>
+          <RouterLink class="title" :to="{ name: 'main' }">트립동산</RouterLink>
+        </h1>
       </div>
-      <template class="right-section" v-for="menu in menuList" :key="menu.routeName">
-        <template v-if="menu.show">
-          {{ menu.name }}
-
-          <!-- <template v-if="menu.routeName === 'user-logout'">
-            <li class="nav-item">
-              <router-link to="#" @click.prevent="logout" class="nav-link">{{
-                menu.name
-              }}</router-link>
-            </li>
-          </template>
-          <template v-else>
-            <li class="nav-item">
-              <router-link :to="{ name: menu.routeName }" class="nav-link">{{
-                menu.name
-              }}</router-link>
-            </li>
-          </template> -->
+      <ul class="right-section">
+        <template v-for="menu in menuList" :key="menu.routeName">
+          <li v-if="menu.show" class="nav-item">
+            <router-link
+              v-if="menu.routeName === 'user-logout'"
+              to="/"
+              @click.prevent="logout"
+              class="nav-link"
+              >{{ menu.name }}</router-link
+            >
+            <router-link v-else :to="{ name: menu.routeName }" class="nav-link">{{
+              menu.name
+            }}</router-link>
+          </li>
         </template>
-      </template>
+      </ul>
     </div>
     <hr />
     <div class="bottom-bar">
       <ul class="left-menu">
         <li><a href="#">원룸</a></li>
         <li><a href="#">오피스텔</a></li>
-        <li><a href="#">MY관심</a></li>
+        <li @click.prevent="$emit('toggle-aside')">my관심</li>
       </ul>
       <ul class="right-menu">
         <li><a href="#">커뮤니티</a></li>
@@ -61,18 +60,18 @@ const logout = () => {
 
 <style scoped>
 header {
-  font-family: "BMHANNAPro";
-  padding: 20px;
+  position: relative;
+  z-index: 100;
+  font-family: "Jalnan2TTF";
   background-color: #fcfcfc;
-  margin: 5px;
-  padding: 0;
+  padding: 20px;
 }
 
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 10px;
+  margin-bottom: 10px;
 }
 
 .left-section {
@@ -90,15 +89,21 @@ header {
   margin: 0;
   font-size: 20px;
   color: #87ceeb;
+  text-decoration-line: none;
 }
 
 .right-section {
   display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.login,
-.signup {
-  margin-left: 10px;
+.nav-item {
+  margin-left: 20px;
+}
+
+.nav-link {
   text-decoration: none;
   color: #333;
 }
@@ -113,7 +118,6 @@ hr {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 10px;
 }
 
 .left-menu,
@@ -122,7 +126,7 @@ hr {
   padding: 0;
   margin: 0;
   display: flex;
-  gap: 50px; /* 메뉴 항목 사이 간격 추가 */
+  gap: 30px;
 }
 
 .left-menu li,
