@@ -3,6 +3,7 @@ import MainHeader from "@/components/layout/HeadingNavbar.vue";
 import OneroomHeader from "@/components/house/OneroomHeader.vue";
 import MapGeoHeader from "@/components/map/MapGeoHeader.vue";
 import MapComplex from "@/components/map/MapComplex.vue";
+import MapComplexOffCanvas from "@/components/map/MapComplexOffCanvas.vue";
 </script>
 
 <template>
@@ -11,7 +12,8 @@ import MapComplex from "@/components/map/MapComplex.vue";
     <OneroomHeader/>
     
     <MapGeoHeader/>
-    <MapComplex/>    
+    <MapComplex/>   
+    <MapComplexOffCanvas residenceType="oneroom"/>  
   </div>
 </template>
 

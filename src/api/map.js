@@ -1,79 +1,107 @@
-import $ from "jquery";
-import { getBounds } from "@/maps/map";
+import { addEventHandle } from "@/util/js-commons";
+import {
+  // getInfo,
+  displaySiGunGuInfoCB,
+  // addFacilityMarker,
+  // removeFacilityMarker,
+  // searchFacilitiesCB,
+  // displayFacilities,
+  // addCategoryClickEvent,
+  // onClickCategory,
+  // changeCategoryClass,
+  addComplexMarker,
+  displayComplexSummaryInfo,
+  displayComplexInfo,
+  displayComplexDealSummaryInfo,
+  displayComplexDealInfo,
+  displayReviewSummaryInfo,
+  displayReviewInfo,
+  addRoadNameToReviewButtons,
+  clearComplexDealList,
+  clearReviewList,
+  getBounds,
+  displayCctvMarkers,
+  // addCctvMarker,
+  // removeCctvMarkers,
+  displayStreetlightMarkers,
+  // addStreetlightMarker,
+  // removeStreetlightMarkers,
+} from "@/maps/map";
 
-let complexOverlay;
+const displaySiGunGuInfo = (map, geocoder) => {
+  const center = map.getCenter();
+  const centerLng = center.getLng();
+  const centerLat = center.getLat();
 
-const displayComplexSummaryInfoCB = (map, info) => {
-    let content = `
-        <div class="complexinfo-wrap badge-container">        
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${info.cnt}</span>
-          <div class="info">
-            <div class="road_name" style="display: none"></div>
-            <div class="title">${info.name}</div>            
-            <div class="price_wrap">
-              <span class="type">${info.contractType}</span>
-              <span class="price">${info.avgAmount} ${info.amountUnit}</span>
-            </div>
-            <dl class="size_wrap">
-              <dd class="size">${info.avgNetArea}㎡</dd>              
-            </dl>            
-            <div>
-                <button type="button" 
-                        class="btn btn-secondary btm-sm btn-block position-relative complex_info" 
-                        data-bs-toggle="offcanvas" 
-                        data-bs-target="#offcanvasScrolling" 
-                        data-road_name="${info.roadName}"                      
-                        aria-controls="offcanvasScrolling">detail</button>
-            </div>   
-          </div>          
-        </div>
-      `;
-  
-    complexOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 }); // 커스텀 오버레이 (장소정보)
-    complexOverlay.setMap(map);
-    complexOverlay.setPosition(
-      new kakao.maps.LatLng(info.yCoordinate, info.xCoordinate)
-    );
-    complexOverlay.setContent(content);
-  };
-
-const addComplexMarkerCB = (map, position) => {
-  const imageSrc =
-    "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png"; // TODO: '단지' 이미지로 변경
-  const imageSize = new kakao.maps.Size(64, 69);
-  const imageOptions = {
-    // spriteSize: new kakao.maps.Size(27,69),
-    // spriteOrigin: new kakao.maps.Point(46,(order*36)),
-    offset: new kakao.maps.Point(27, 69),
-  };
-  const markerImage = new kakao.maps.MarkerImage(
-    imageSrc,
-    imageSize,
-    imageOptions
-  );
-  const marker = new kakao.maps.Marker({
-    //   position: position,
-    //   position: new kakao.maps.LatLng(37.566826, 126.9786567),
-    position: new kakao.maps.LatLng(position.yCoordinate, position.xCoordinate),
-    image: markerImage,
-  });
-
-  marker.setMap(map);
-  // complexMarkers.push(marker)
-
-  // return marker
+  // request: 좌표 to 행정동 주소
+  geocoder.coord2RegionCode(centerLng, centerLat, displaySiGunGuInfoCB);
 };
 
+const displayFacilityInfo = (place) => {
+  // let content = `<div class="facilityinfo"><a class="title" href="${place.place_url}" target="_blank" title="${place.place_name}" >${place.place_name}</a>`
+  let content = `<div class="facilityinfo">`;
+
+  if (place.road_address_name) {
+    content += ` <span title=${place.road_address_name}>${place.road_address_name}</span> <span class="jibun" title=${place.address_name}>(지번 : ${place.address_name})</span>`;
+  } else {
+    content += ` <span title=${place.address_name}>${place.address_name}</span>`;
+  }
+
+  content += ` <span class="tel">${place.phone}</span></div><div class="after"></div>`;
+  facilityContentNode.innerHTML = content;
+  facilityOverlay.setPosition(new kakao.maps.LatLng(place.y, place.x));
+  facilityOverlay.setMap(map);
+};
+
+// const searchFacilities = (map, ps, curCategory, facilityOverlay) => {
+//   if (!curCategory) {
+//     return;
+//   } else if (curCategory === "CCTV") {
+//     getCctvData(map);
+//   } else if (curCategory === "streetlight") {
+//     getStreetlightData(map);
+//   } else {
+//     facilityOverlay.setMap(null);
+
+//     removeFacilityMarker();
+
+//     ps.categorySearch(curCategory, searchFacilitiesCB, { useMapBounds: true });
+//   }
+// };
+
+// function initFacility(map, ps, curCategory) {
+//   let facilityContentNode = document.createElement("div"); // 커스텀 오버레이 노드
+//   facilityContentNode.className = "facilityinfo_wrap";
+
+//   let facilityOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 }); // 커스텀 오버레이 (장소정보)
+//   facilityOverlay.setContent(facilityContentNode);
+
+//   addEventHandle(facilityContentNode, "mousedown", kakao.maps.event.preventMap);
+//   addCategoryClickEvent(facilityOverlay, curCategory, searchFacilities);
+
+//   kakao.maps.event.addListener(
+//     map,
+//     "idle",
+//     () => searchFacilities(map, ps, curCategory, facilityOverlay)
+//   );
+// }
+
 const getComplexDealSummaryList = (map, residenceType) => {
+  const { topLat, bottomLat, leftLng, rightLng } = getBounds(map);
   $.ajax({
     url: "http://localhost:8080/api/house/deal/list-summary",
     type: "GET",
     data: {
       residenceType,
-      ...getBounds(map),
+      topLat,
+      bottomLat,
+      leftLng,
+      rightLng,
     },
     success: function (response) {
       for (const dealSummary of response) {
+        // console.log(dealSummary)
+
         if (dealSummary.contractType === "전세") {
           dealSummary.avgAmount = dealSummary.avgDeposit / 10000;
           dealSummary.amountUnit = "억";
@@ -85,8 +113,8 @@ const getComplexDealSummaryList = (map, residenceType) => {
           dealSummary.amountUnit = "억";
         }
 
-        addComplexMarkerCB(map, dealSummary);
-        displayComplexSummaryInfoCB(map, dealSummary);
+        addComplexMarker(map, dealSummary);
+        displayComplexSummaryInfo(map, dealSummary);
       }
     },
     error: function (error) {
@@ -95,4 +123,177 @@ const getComplexDealSummaryList = (map, residenceType) => {
   });
 };
 
-export { getComplexDealSummaryList };
+const getComplexSummary = (roadName) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/summary",
+    type: "GET",
+    data: {
+      roadName,
+    },
+    success: function (response) {
+      displayComplexInfo(response);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+const getComplexDealSummary = (residenceType, roadName) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/deal/summary",
+    type: "GET",
+    data: {
+      residenceType,
+      roadName,
+    },
+    success: function (response) {
+      displayComplexDealSummaryInfo(response);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+const getComplexDealList = (residenceType, roadName) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/deal/list",
+    type: "GET",
+    data: {
+      residenceType,
+      roadName,
+    },
+    success: function (response) {
+      clearComplexDealList();
+      for (let info of response) {
+        displayComplexDealInfo(info);
+      }
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+const getComplexReviewSummary = (roadName) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/review/summary",
+    type: "GET",
+    data: {
+      roadName,
+    },
+    success: function (response) {
+      displayReviewSummaryInfo(response);
+      addRoadNameToReviewButtons(roadName);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+const getComplexReviewList = (roadName) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/review/list",
+    type: "GET",
+    data: {
+      roadName,
+    },
+    success: function (response) {
+      clearReviewList();
+      for (let info of response) {
+        displayReviewInfo(info);
+      }
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+const insertReview = (review) => {
+  $.ajax({
+    url: "http://localhost:8080/api/house/review",
+    type: "POST",
+    data: review,
+    contentType: "application/x-www-form-urlencoded", // URL 인코딩된 데이터 형식
+    success: function (response) {
+      $("#residence_period").val("거주기간");
+      $("#transportRating").val(3);
+      $("#complexRating").val(3);
+      $("#facilityRating").val(3);
+      $("#content").val("");
+
+      $("#successModal").modal("show");
+      $(".modal-backdrop").removeClass("modal-backdrop");
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+};
+
+// cctv
+function getCctvData(map) {
+  const bounds = map.getBounds();
+  const swLatLng = bounds.getSouthWest();
+  const neLatLng = bounds.getNorthEast();
+
+  $.ajax({
+    url: "http://localhost:8080/api/cctv/map",
+    type: "GET",
+    data: {
+      swLat: swLatLng.getLat(),
+      swLng: swLatLng.getLng(),
+      neLat: neLatLng.getLat(),
+      neLng: neLatLng.getLng(),
+    },
+    success: function (response) {
+      displayCctvMarkers(response);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+}
+
+// streetlight
+function getStreetlightData(map) {
+  const bounds = map.getBounds();
+  const swLatLng = bounds.getSouthWest();
+  const neLatLng = bounds.getNorthEast();
+
+  $.ajax({
+    url: "http://localhost:8080/api/light/map",
+    type: "GET",
+    data: {
+      swLat: swLatLng.getLat(),
+      swLng: swLatLng.getLng(),
+      neLat: neLatLng.getLat(),
+      neLng: neLatLng.getLng(),
+    },
+    success: function (response) {
+      displayStreetlightMarkers(response);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+}
+
+export {
+  displaySiGunGuInfo,
+  displayFacilityInfo,
+  // searchFacilities,
+  // initFacility,
+  getComplexDealSummaryList,
+  getComplexSummary,
+  getComplexDealSummary,
+  getComplexDealList,
+  getComplexReviewSummary,
+  getComplexReviewList,
+  insertReview,
+  getCctvData,
+  getStreetlightData,
+};
