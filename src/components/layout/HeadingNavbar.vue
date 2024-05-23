@@ -47,7 +47,9 @@ defineEmits(["toggle-aside"]);
     <hr />
     <div class="bottom-bar">
       <ul class="left-menu">
-        <li><a href="#">원룸</a></li>
+        <!-- <li><a href="#">원룸</a></li> -->
+        <router-link :to="{ name: 'onerooms' }" class="nav-link">원룸</router-link>
+
         <li><a href="#">오피스텔</a></li>
         <li @click.prevent="$emit('toggle-aside')">my관심</li>
       </ul>

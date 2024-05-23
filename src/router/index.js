@@ -28,8 +28,6 @@ const router = createRouter({
       name: "main",
       component: () => import("@/views/MainView.vue"),
     },
-
-    // 유저 //
     {
       path: "/user",
       name: "user",
@@ -53,6 +51,23 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/house",
+      name: "house",
+      component: () => import("@/views/HouseView.vue"),
+      children: [
+        {
+          path: "onerooms",
+          name: "onerooms",
+          component: () => import("@/components/house/OneroomsDealSummary.vue"),
+        },
+        // {
+        //   path: "officetels",
+        //   name: "officetels",
+        //   component: () => import("@/components/house/OfficetelsDealSummary.vue"),
+        // },
+      ]
+    }
   ],
 });
 
