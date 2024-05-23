@@ -5,7 +5,7 @@ import { httpStatusCode } from "@/util/http-status";
 import * as estateAPI from "@/api/estate.js";
 
 export const useEstateStore = defineStore("estateStore", () => {
-  const estateList = ref([]);
+  const estateInterestList = ref([]);
 
   const getEsateInterestList = async () => {
     const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -14,14 +14,16 @@ export const useEstateStore = defineStore("estateStore", () => {
     await estateAPI.getEstateInterestInfoByEmail(
       email,
       (response) => {
-        estateList.value = response.data;
+        estateInterestList.value = response.data;
       },
       (error) => {
         console.log("관심 부동산 목록 출력 실패!!!");
         console.log(error);
       }
     );
+
+    return estateInterestList.value;
   };
 
-  return { estateList, getEsateInterestList };
+  return { estateInterestList, getEsateInterestList };
 });

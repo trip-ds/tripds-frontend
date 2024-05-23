@@ -1,19 +1,31 @@
 <script setup>
-import { useEstateStore } from "@/stores/estate.js";
-import { storeToRefs } from "pinia";
+import { watch } from "vue";
 
-const estateStore = useEstateStore();
-const { estateList } = storeToRefs(estateStore);
-const { getEsateInterestList } = estateStore;
-
-console.log(estateList);
-
-defineProps({
+const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false,
   },
+  estateInterestList: {
+    type: Array,
+    default: () => [],
+  },
 });
+
+watch(
+  () => props.estateInterestList,
+  (newVal) => {
+    console.log(newVal);
+  }
+);
+
+const formatRegisterDate = (registerDate) => {
+  if (registerDate && registerDate.length === 3) {
+    const [year, month, day] = registerDate;
+    return `${year}년 ${month}월 ${day}일`;
+  }
+  return "";
+};
 </script>
 
 <!-- Aside.vue -->
@@ -44,123 +56,30 @@ defineProps({
           </div>
           <div class="list-group gap-3">
             <a
+              v-for="estate in estateInterestList"
+              :key="estate.registerNumber"
               class="list-group-item list-group-item-action"
               id="list-home-list"
               data-bs-toggle="list"
               aria-controls="list-home"
             >
               <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">동양엔파트 474동</h4>
+                <h4 class="m-1">{{ estate.complexName ? estate.complexName : estate.name }}</h4>
                 <button class="btn btn-link">
                   <img class="like" src="@/assets/heart.svg" />
                 </button>
               </div>
-              <div class="price_line ms-2"><span class="price fs-4">5억</span></div>
+              <div class="price_line ms-2">
+                <span class="price fs-4">{{ estate.roadName }}</span>
+              </div>
               <div class="mt-2 ms-2">
-                <span class="floor">4층</span>, <span class="net_area">53m²</span>
+                <div class="floor">{{ estate.complexName }}</div>
+                <div class="net_area">대표 : {{ estate.representativeName }}</div>
               </div>
               <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 21일</small>
-              </div>
-            </a>
-            <a
-              class="list-group-item list-group-item-action"
-              id="list-home-list"
-              data-bs-toggle="list"
-              aria-controls="list-home"
-            >
-              <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">행복아파트 101동</h4>
-                <button class="btn btn-link">
-                  <img class="like" src="@/assets/heart.svg" />
-                </button>
-              </div>
-              <div class="price_line ms-2"><span class="price fs-4">3억 5,000</span></div>
-              <div class="mt-2 ms-2">
-                <span class="floor">7층</span>, <span class="net_area">45m²</span>
-              </div>
-              <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 18일</small>
-              </div>
-            </a>
-            <a
-              class="list-group-item list-group-item-action"
-              id="list-home-list"
-              data-bs-toggle="list"
-              aria-controls="list-home"
-            >
-              <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">광명빌라 B동</h4>
-                <button class="btn btn-link">
-                  <img class="like" src="@/assets/heart.svg" />
-                </button>
-              </div>
-              <div class="price_line ms-2"><span class="price fs-4">2억 8,000</span></div>
-              <div class="mt-2 ms-2">
-                <span class="floor">2층</span>, <span class="net_area">38m²</span>
-              </div>
-              <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 15일</small>
-              </div>
-            </a>
-            <a
-              class="list-group-item list-group-item-action"
-              id="list-home-list"
-              data-bs-toggle="list"
-              aria-controls="list-home"
-            >
-              <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">광명빌라 B동</h4>
-                <button class="btn btn-link">
-                  <img class="like" src="@/assets/heart.svg" />
-                </button>
-              </div>
-              <div class="price_line ms-2"><span class="price fs-4">2억 8,000</span></div>
-              <div class="mt-2 ms-2">
-                <span class="floor">2층</span>, <span class="net_area">38m²</span>
-              </div>
-              <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 15일</small>
-              </div>
-            </a>
-            <a
-              class="list-group-item list-group-item-action"
-              id="list-home-list"
-              data-bs-toggle="list"
-              aria-controls="list-home"
-            >
-              <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">광명빌라 B동</h4>
-                <button class="btn btn-link">
-                  <img class="like" src="@/assets/heart.svg" />
-                </button>
-              </div>
-              <div class="price_line ms-2"><span class="price fs-4">2억 8,000</span></div>
-              <div class="mt-2 ms-2">
-                <span class="floor">2층</span>, <span class="net_area">38m²</span>
-              </div>
-              <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 15일</small>
-              </div>
-            </a>
-            <a
-              class="list-group-item list-group-item-action"
-              id="list-home-list"
-              data-bs-toggle="list"
-              aria-controls="list-home"
-            >
-              <div class="d-flex w-100 mb-2 justify-content-between">
-                <h4 class="m-1">광명빌라 B동</h4>
-                <button class="btn btn-link">
-                  <img class="like" src="@/assets/heart.svg" />
-                </button>
-              </div>
-              <div class="price_line ms-2"><span class="price fs-4">2억 8,000</span></div>
-              <div class="mt-2 ms-2">
-                <span class="floor">2층</span>, <span class="net_area">38m²</span>
-              </div>
-              <div class="mt-2">
-                <small class="contract_date fw-bold">등록일: 2023년 05월 15일</small>
+                <small class="contract_date fw-bold"
+                  >등록일: {{ formatRegisterDate(estate.registerDate) }}</small
+                >
               </div>
             </a>
           </div>
